@@ -12,15 +12,21 @@ import scala.collection.mutable.MutableList
 
 class RootActor extends Actor with ActorLogging {
 
-  val list: MutableList[ActorRef] = MutableList.empty
+  val list: MutableList[String] = MutableList.empty
 
   override def receive: Receive = {
     case ref: ActorRef =>
       log.info("add" + ref.path.name)
-      list += ref
+      list += ref.path.toString
     case msg: ByteString =>
       log.info(msg.toString)
-      list.foreach { con => con ! Write(msg) }
+      log.info(list.toString)
+      log.info(list.size.toString)
+      list.foreach { path =>
+        val actorref = context.system.actorSelection(path)
+        actorref ! Write(msg)
+//        con ! Write(msg)
+      }
     case s : String =>
       log.info(s)
     case _ : AnyRef =>
