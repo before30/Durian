@@ -1,10 +1,10 @@
-package durian.actors.server
+package durian.actors.client
 
 import akka.actor._
 import akka.io.Tcp
-import akka.io.Tcp._
+import durian.actors.server.Msg
 
-class EchoActor extends Actor with ActorLogging{
+class EchoActor extends Actor with ActorLogging {
 
   import Tcp._
 
@@ -12,12 +12,10 @@ class EchoActor extends Actor with ActorLogging{
 
     case Received(data) =>
       log.info("" + data)
-
       sender() ! Write(data)
-    case PeerClosed     =>
-
+    case PeerClosed =>
       context stop self
-    case _ : AnyRef =>
+    case _: AnyRef =>
       log.info("You should do anything!!")
   }
 }

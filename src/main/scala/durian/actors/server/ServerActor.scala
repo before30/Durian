@@ -6,11 +6,15 @@ import akka.io._
 import akka.util.ByteString
 import java.net.InetSocketAddress
 import Tcp._
+import durian.actors.client.{Connections, Client, EchoActor}
+
+import scala.collection.mutable.MutableList
+
+case class Msg(msg: ByteString)
 
 class ServerActor extends Actor with ActorLogging{
 
   import context.system
-
 
   override def preStart() {
     log.info("Hello I'm Server Actor!")
@@ -24,14 +28,22 @@ class ServerActor extends Actor with ActorLogging{
       log.info("b @ Bound(localAddress)" + localAddress)
 
     case c @ Connected(remote, local) =>
+      val handler = context.actorOf(Props[Client])
 
-      val handler = context.actorOf(Props[EchoActor])
-//      val id = UUID.randomUUID().toString
-//      val handler = context.actorOf(Props(new EchoActor(id))
-      // sender()는 커넥션을 관리하는 actor
+      //      val id = UUID.randomUUID().toString
+      //      val handler = context.actorOf(Props(new EchoActor(id))
+
+      // sender는
       val connection = sender()
+
+      // clients list유지
+      Connections.clients += connection
       connection ! Register(handler)
 
+    case Msg(msg) =>
+      Connections.clients.foreach { client =>
+        client ! Write(msg)
+      }
     case CommandFailed(_: Bind) => context stop self
       log.info("CommandFailed(_: Bind)")
 
@@ -39,4 +51,5 @@ class ServerActor extends Actor with ActorLogging{
       log.info("nothing special!")
 
   }
+  
 }
