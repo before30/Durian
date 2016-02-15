@@ -16,6 +16,10 @@ class ServerActor extends Actor with ActorLogging{
 
   import context.system
 
+  val rootActor = context.system.actorSelection("akka.tcp://durian@192.168.6.22:30000/user/rootActor")
+
+  log.info(rootActor.toString)
+
   override def preStart() {
     log.info("Hello I'm Server Actor!")
   }
@@ -36,14 +40,16 @@ class ServerActor extends Actor with ActorLogging{
       // sender는
       val connection = sender()
 
+      rootActor ! connection
       // clients list유지
       Connections.clients += connection
       connection ! Register(handler)
 
     case Msg(msg) =>
-      Connections.clients.foreach { client =>
-        client ! Write(msg)
-      }
+      rootActor ! msg
+//      Connections.clients.foreach { client =>
+//        client ! Write(msg)
+//      }
     case CommandFailed(_: Bind) => context stop self
       log.info("CommandFailed(_: Bind)")
 
