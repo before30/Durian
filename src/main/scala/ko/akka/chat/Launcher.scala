@@ -11,12 +11,12 @@ object Launcher {
     val system2 = ActorSystem("yang", config.getConfig("yang"))
 
     val sessionRoot1 = system1.actorOf(Props[SessionRoot], "sessionRoot")
-    val server1 = system1.actorOf(Server.props(config.getString("joel.hostname"), config.getInt("joel.port"), sessionRoot1))
+    val server1 = system1.actorOf(Server.props(config.getString("joel.hostname"), config.getInt("joel.port")))
     system1.actorOf(Props[SimpleClusterListener], "listener")
 
 //    val sessionRoot2 = system2.actorOf(Props[SessionRoot], "sessionRoot")
-//    val server2 = system2.actorOf(Server.props(config.getString("yang.hostname"), config.getInt("yang.port"), sessionRoot2))
-//    system2.actorOf(Props[SimpleClusterListener], "listener")
+    val server2 = system2.actorOf(Server.props(config.getString("yang.hostname"), config.getInt("yang.port")))
+    system2.actorOf(Props[SimpleClusterListener], "listener")
 
   }
 }

@@ -1,6 +1,6 @@
 package ko.akka.chat.actors
 
-import akka.actor.{ActorRef, Props, ActorLogging, Actor}
+import akka.actor._
 import akka.io.Tcp.{Write, PeerClosed, Received}
 import akka.util.ByteString
 import ko.akka.chat.dto.{SessionUnsubscribe, SessionSubscribe, SessionMessage}
@@ -9,12 +9,12 @@ import scala.collection.mutable
 
 
 object Session {
-  def props(id: String, connection: ActorRef, sessionRootActor: ActorRef) = {
+  def props(id: String, connection: ActorRef, sessionRootActor: ActorSelection) = {
     Props(classOf[Session], id, connection, sessionRootActor)
   }
 }
 
-class Session(id: String, connection: ActorRef, sessionRoot: ActorRef) extends Actor with ActorLogging {
+class Session(id: String, connection: ActorRef, sessionRoot: ActorSelection) extends Actor with ActorLogging {
 
   override def preStart() = {
     sessionRoot ! SessionSubscribe(id, self)
@@ -29,6 +29,7 @@ class Session(id: String, connection: ActorRef, sessionRoot: ActorRef) extends A
       log.info("[from {}] : {}", id, data)
       sessionRoot ! SessionMessage(id, data)
     case PeerClosed =>
+      sessionRoot ! SessionMessage(id, ByteString(id + " will quit"))
       context stop self
     case msg: SessionMessage => {
       log.info("[{}] : {}",msg.from, msg.byteString)

@@ -8,13 +8,15 @@ import akka.io.{Tcp, IO}
 import scala.util.Random
 
 object Server {
-  def props(hostName: String, port: Int, sessionRoot: ActorRef) = {
-    Props(classOf[Server], hostName, port, sessionRoot)
+  def props(hostName: String, port: Int) = {
+    Props(classOf[Server], hostName, port)
   }
 }
 
-class Server(hostName: String, port: Int, sessionRoot: ActorRef) extends Actor with ActorLogging{
+class Server(hostName: String, port: Int) extends Actor with ActorLogging{
   import context.system
+
+  val sessionRoot = system.actorSelection("akka.tcp://joel@localhost:30001/user/sessionRoot")
 
   IO(Tcp) ! Bind(self, new InetSocketAddress(hostName, port))
 
