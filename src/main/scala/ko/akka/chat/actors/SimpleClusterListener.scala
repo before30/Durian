@@ -1,4 +1,4 @@
-package ko.akka.chatt.actors
+package ko.akka.chat.actors
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.Cluster

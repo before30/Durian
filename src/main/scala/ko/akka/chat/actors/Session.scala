@@ -1,9 +1,9 @@
-package ko.akka.chatt.actors
+package ko.akka.chat.actors
 
 import akka.actor.{ActorRef, Props, ActorLogging, Actor}
 import akka.io.Tcp.{Write, PeerClosed, Received}
 import akka.util.ByteString
-import ko.akka.chatt.dto.{SessionUnsubscribe, SessionSubscribe, SessionMessage}
+import ko.akka.chat.dto.{SessionUnsubscribe, SessionSubscribe, SessionMessage}
 
 import scala.collection.mutable
 

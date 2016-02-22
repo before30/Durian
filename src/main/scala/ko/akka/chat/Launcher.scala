@@ -1,8 +1,8 @@
-package ko.akka.chatt
+package ko.akka.chat
 
 import akka.actor.{Props, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import ko.akka.chatt.actors.{SessionRoot, SimpleClusterListener, Server}
+import ko.akka.chat.actors.{SessionRoot, SimpleClusterListener, Server}
 
 object Launcher {
   def main(args: Array[String]) {

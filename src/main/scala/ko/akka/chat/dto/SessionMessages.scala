@@ -1,4 +1,4 @@
-package ko.akka.chatt.dto
+package ko.akka.chat.dto
 
 import akka.actor.ActorRef
 import akka.util.ByteString

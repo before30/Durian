@@ -1,4 +1,4 @@
-package ko.akka.chatt.actors
+package ko.akka.chat.actors
 
 import java.net.InetSocketAddress
 import akka.actor.{ActorRef, Props, ActorLogging, Actor}
