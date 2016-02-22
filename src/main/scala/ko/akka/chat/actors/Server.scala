@@ -16,7 +16,7 @@ object Server {
 class Server(hostName: String, port: Int) extends Actor with ActorLogging{
   import context.system
 
-  val sessionRoot = system.actorSelection("akka.tcp://joel@localhost:30001/user/sessionRoot")
+  val sessionRoot = context.actorOf(Props[SessionRoot], "sessionRoot")
 
   IO(Tcp) ! Bind(self, new InetSocketAddress(hostName, port))
 
