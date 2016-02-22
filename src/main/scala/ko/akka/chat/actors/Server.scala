@@ -4,6 +4,7 @@ import java.net.InetSocketAddress
 import akka.actor.{ActorRef, Props, ActorLogging, Actor}
 import akka.io.Tcp._
 import akka.io.{Tcp, IO}
+import ko.akka.chat.ContextRoot
 
 import scala.util.Random
 
@@ -16,7 +17,7 @@ object Server {
 class Server(hostName: String, port: Int) extends Actor with ActorLogging{
   import context.system
 
-  val sessionRoot = context.actorOf(Props[SessionRoot], "sessionRoot")
+//  val sessionRoot = context.actorOf(Props[SessionRoot], "sessionRoot")
 
   IO(Tcp) ! Bind(self, new InetSocketAddress(hostName, port))
 
@@ -26,7 +27,7 @@ class Server(hostName: String, port: Int) extends Actor with ActorLogging{
 
     case c @ Connected(remote, local) =>
       val id = Random.alphanumeric.take(10).mkString
-      val session = context.actorOf(Session.props(id, sender(), sessionRoot))
+      val session = context.actorOf(Session.props(id, sender(), ContextRoot.sessionRoot))
       log.info("create actor for {}", id)
       val connection = sender()
       connection ! Register(session)

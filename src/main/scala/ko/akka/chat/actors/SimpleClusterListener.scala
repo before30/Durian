@@ -38,6 +38,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
       val sessionRoot = ContextRoot.system.actorSelection(member.address + "/user/sessionRoot")
       sessionRoots.-=(sessionRoot)
     case message: SessionMessage => {
+      log.info("message form {}", message)
       sessionRoots.foreach(session => {
         session ! message
       })
