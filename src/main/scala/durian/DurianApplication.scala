@@ -1,6 +1,7 @@
 import akka.actor.{Props, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import durian.actors.server.{RootActor, SimpleClusterListener, ServerActor}
+import durian.actors.server.{RootActor, ServerActor}
+import ko.akka.chatt.actors.SimpleClusterListener
 
 object DurianApplication extends App {
   val config = ConfigFactory.load()
