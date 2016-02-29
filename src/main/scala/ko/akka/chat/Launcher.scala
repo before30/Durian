@@ -1,20 +1,29 @@
 package ko.akka.chat
 
-import akka.actor.{Props, ActorSystem}
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
-import ko.akka.chat.actors.{SessionRoot, SimpleClusterListener, Server}
+import ko.akka.chat.actors.Server
 
 object Launcher {
   def main(args: Array[String]) {
-    val config = ConfigFactory.load();
-//    val system1 = ActorSystem("joel", config.getConfig("joel"))
-//    val system2 = ActorSystem("joel", config.getConfig("yang"))
+//    val path = try {
+//      args.apply(0)
+//    } catch {
+//      case ex : Exception => {
+//        "master"
+//      }
+//    }
+//
+//    val conf = ConfigFactory.load().getConfig(path)
+//    Server.props(conf)
 
-    val server1 = ContextRoot.system.actorOf(Server.props(config.getString("joel.hostname"), config.getInt("joel.port")))
+    println("start application")
+    val system1 = ActorSystem("master", ConfigFactory.load().getConfig("master"))
+    system1.actorOf(Server.props(ConfigFactory.load().getConfig("master")))
 
-//    val sessionRoot2 = system2.actorOf(Props[SessionRoot], "sessionRoot")
-//    val server2 = system2.actorOf(Server.props(config.getString("yang.hostname"), config.getInt("yang.port")))
-//    system2.actorOf(Props[SimpleClusterListener], "listener")
-
+    val system2 = ActorSystem("master", ConfigFactory.load().getConfig("slave"))
+    system2.actorOf(Server.props(ConfigFactory.load().getConfig("slave")))
   }
+
 }
+
