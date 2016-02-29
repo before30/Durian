@@ -1,0 +1,5 @@
+1. Session Message, Reply Message 수정.
+2. Static한 것들을 Dynamic으로 수정 필요 // 6장에 나온 내용 적용 필요
+--> Session Root는 1개가 되고 Session들은 각각의 node에 생성되는 형태
+--> Master의 Session Root가 죽는 경우 Persistent 정보를 가지고 신규 Session Root가 등장 // Actor만 죽이는 테스트 환경 필요
+
