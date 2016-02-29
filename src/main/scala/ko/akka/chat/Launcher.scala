@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigFactory
 import ko.akka.chat.actors.Server
 
 object Launcher {
-  def main(args: Array[String]) {
+  def main(args: Array[String]):Unit = {
 //    val path = try {
 //      args.apply(0)
 //    } catch {
@@ -26,4 +26,3 @@ object Launcher {
   }
 
 }
-
