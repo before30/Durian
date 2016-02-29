@@ -21,7 +21,9 @@ class Server(conf: Config) extends Actor with ActorLogging{
 
   IO(Tcp) ! Bind(self, new InetSocketAddress(conf.getString("hostname"), conf.getInt("port")))
   val sessionRoot = context.system.actorOf(Props[SessionRoot], "sessionRoot")
-  val simpleListener = context.system.actorOf(Props[SimpleClusterListener], "listener")
+  val simpleListener = context.system.actorOf(SimpleClusterListener.props(sessionRoot), "listener")
+
+
 
   def receive = {
     case b @ Bound(localAddress) =>
