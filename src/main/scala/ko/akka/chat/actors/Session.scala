@@ -1,13 +1,13 @@
 package ko.akka.chat.actors
 
+import scala.collection.mutable
+import scala.concurrent.duration._
+import scala.language.postfixOps
+
 import akka.actor._
-import akka.io.Tcp.{Write, PeerClosed, Received}
+import akka.io.Tcp.{PeerClosed, Received, Write}
 import akka.util.ByteString
 import ko.akka.chat.dto._
-import scala.concurrent.duration._
-
-import scala.collection.mutable
-
 
 object Session {
   def props(id: String, connection: ActorRef, sessionRootActor: ActorRef, simpleListener: ActorRef) = {
@@ -29,17 +29,17 @@ class Session(id: String, connection: ActorRef, sessionRoot: ActorRef, simpleLis
     case Received(data) =>
       log.info("[from {}] : {}", id, data)
       sessionRoot ! SessionMessage(id, data)
-//      simpleListener ! SessionMessage(id, data)
+    //      simpleListener ! SessionMessage(id, data)
     case PeerClosed =>
       sessionRoot ! SessionMessage(id, ByteString(id + " will quit"))
-//      simpleListener ! SessionMessage(id, ByteString(id + " will quit"))
+      //      simpleListener ! SessionMessage(id, ByteString(id + " will quit"))
       context stop self
     case msg: SessionMessage => {
-      log.info("[{}] : {}",msg.from, msg.byteString)
+      log.info("[{}] : {}", msg.from, msg.byteString)
       connection ! Write(ByteString("[" + msg.from + "]"))
       connection ! Write(msg.byteString)
     }
-    case _ : AnyRef =>
+    case _: AnyRef =>
       log.info("Not Supported")
   }
 }
@@ -69,7 +69,6 @@ class SessionRoot extends Actor with ActorLogging {
     case RelayMessage(from, msg) => {
       sessions.foreach(pair => if (from != pair._1) pair._2 ! SessionMessage(from, msg))
     }
-
 
     case MemberJoin(path) => {
       log.info(s"path : $path, self.path ${self.path}")
@@ -102,14 +101,14 @@ class SessionRootLookUp(path: String) extends Actor with ActorLogging {
 
   def identify: Receive = {
 
-    case ActorIdentity( `path`, Some(actor)) => {
+    case ActorIdentity(`path`, Some(actor)) => {
       context.setReceiveTimeout(Duration.Undefined)
       log.info("will be active state")
       context.become(active(actor))
       context.watch(actor)
     }
 
-    case ActorIdentity( `path`, None) => {
+    case ActorIdentity(`path`, None) => {
       log.error(s"Remote actor with path $path is not available")
     }
 
@@ -119,7 +118,6 @@ class SessionRootLookUp(path: String) extends Actor with ActorLogging {
     case msg: Any =>
       log.error(s"Ignoring message $msg, not ready yet.")
   }
-
 
   def active(actor: ActorRef): Receive = {
     case Terminated(actorRef) => {
