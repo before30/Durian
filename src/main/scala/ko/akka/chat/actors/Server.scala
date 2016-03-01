@@ -20,10 +20,6 @@ class Server(conf: Config) extends Actor with ActorLogging{
   import context.system
 
   IO(Tcp) ! Bind(self, new InetSocketAddress(conf.getString("hostname"), conf.getInt("port")))
-  val sessionRoot = context.system.actorOf(Props[SessionRoot], "sessionRoot")
-  val simpleListener = context.system.actorOf(SimpleClusterListener.props(sessionRoot), "listener")
-
-
 
   def receive = {
     case b @ Bound(localAddress) =>
@@ -31,7 +27,7 @@ class Server(conf: Config) extends Actor with ActorLogging{
 
     case c @ Connected(remote, local) =>
       val id = Random.alphanumeric.take(10).mkString
-      val session = context.actorOf(Session.props(id, sender(), sessionRoot, simpleListener))
+      val session = context.actorOf(Session.props(id, sender()))
       log.info("create actor for {}", id)
       val connection = sender()
       connection ! Register(session)
